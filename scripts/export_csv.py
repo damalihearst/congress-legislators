@@ -11,7 +11,7 @@ from utils import yaml_load
 def run():
 
 	if len(sys.argv) < 2:
-		print("Usage: python export_csv.py ../legislators-current.yaml > legislators-current.csv")
+		print("Usage: python export_csv.py ../legislators-historical.yaml > legislators-historical.csv")
 		sys.exit(0)
 
 	data = yaml_load(sys.argv[1])
