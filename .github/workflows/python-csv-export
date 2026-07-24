@@ -1,0 +1,52 @@
+import yaml
+import csv
+import urllib.request
+
+# Download the file directly from GitHub
+url = "https://unitedstates.github.io/congress-legislators/legislators-historical.yaml"
+urllib.request.urlretrieve(url, "legislators-historical.yaml")
+
+# Load the YAML
+with open("legislators-historical.yaml", "r") as f:
+    legislators = yaml.safe_load(f)
+
+# Flatten each record
+rows = []
+for leg in legislators:
+    ids = leg.get("id", {})
+    name = leg.get("name", {})
+    bio  = leg.get("bio", {})
+    
+    # One row per term
+    for term in leg.get("terms", []):
+        row = {
+            # IDs
+            "bioguide":     ids.get("bioguide"),
+            "govtrack":     ids.get("govtrack"),
+            "thomas":       ids.get("thomas"),
+            # Name
+            "first":        name.get("first"),
+            "middle":       name.get("middle"),
+            "last":         name.get("last"),
+            "suffix":       name.get("suffix"),
+            # Bio
+            "birthday":     bio.get("birthday"),
+            "gender":       bio.get("gender"),
+            # Term
+            "type":         term.get("type"),
+            "start":        term.get("start"),
+            "end":          term.get("end"),
+            "state":        term.get("state"),
+            "party":        term.get("party"),
+            "district":     term.get("district"),
+            "url":          term.get("url"),
+        }
+        rows.append(row)
+
+# Write to CSV
+with open("legislators-historical.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+    writer.writeheader()
+    writer.writerows(rows)
+
+print(f"Done! {len(rows)} rows written.")
